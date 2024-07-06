@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, Response, request, send_from_directory
+from flask import Flask, Response, request, send_from_directory
 from flask_uploads import UploadSet, configure_uploads
 import cv2
 from werkzeug.utils import secure_filename
@@ -20,8 +20,15 @@ configure_uploads(app, videos)
 @app.route("/upload", methods=['POST'])
 def upload():
     if request.method == 'POST' and 'video' in request.files:
-        videos.save(request.files['video'])
+        filename = videos.save(request.files['video'])
         print("video saved.")
+        video_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+        frame_files = extract_frames(video_path, app.config['FRAME_FOLDER'])
+        for frame in frame_files:
+            
+
+        
         return Response({"yes": "yes"}, status=200, mimetype='application/json')
     else:
         return Response({"no": "no"}, status=201, mimetype='application/json')
