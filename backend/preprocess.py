@@ -1,25 +1,16 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+import json
+import os
 import cv2
 import clip
 import torch
 from PIL import Image
 import numpy as np
-import joblib
-import os
 import librosa
-
-app = Flask(__name__)
-CORS(app)
+from sklearn.preprocessing import MultiLabelBinarizer
+import joblib
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model, preprocess = clip.load("ViT-B/32", device=device)
-
-# Load your trained logistic regression model
-logistic_model = joblib.load('trained_model.pkl')  # Ensure you save and load your model properly
-
-# Load your MultiLabelBinarizer
-mlb = joblib.load('mlb.pkl')  # Ensure you save and load your binarizer properly
 
 def extract_frames(video_path, frame_rate=1):
     video_capture = cv2.VideoCapture(video_path)
@@ -49,32 +40,33 @@ def extract_audio_features(video_path):
     mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
     return np.mean(mfccs.T, axis=0)
 
-@app.route("/generate_hashtags/", methods=["POST"])
-def generate_hashtags():
-    if 'file' not in request.files:
-        return jsonify({"error": "No file part"}), 400
+data_dir = "data"
+features = []
+labels = []
 
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
+for hashtag in ["london", "paris", "newyork"]:
+    posts_file = os.path.join(data_dir, hashtag, "posts.json")
+    with open(posts_file, "r") as f:
+        posts = json.load(f)
 
-    if file:
-        video_path = os.path.join("temp_videos", file.filename)
-        os.makedirs("temp_videos", exist_ok=True)
-        file.save(video_path)
-
+    for post in posts:
+        video_path = os.path.join(data_dir, hashtag, "media", post["video_id"] + ".mp4")
         frames = extract_frames(video_path)
         frame_features = extract_clip_features(frames)
         averaged_frame_features = np.mean(frame_features, axis=0)
 
         audio_features = extract_audio_features(video_path)
 
-        combined_features = np.concatenate((averaged_frame_features, audio_features)).reshape(1, -1)
+        combined_features = np.concatenate((averaged_frame_features, audio_features))
 
-        hashtags = logistic_model.predict(combined_features)
-        predicted_hashtags = mlb.inverse_transform(hashtags)[0]
+        features.append(combined_features)
+        labels.append(post["hashtags"])
 
-        return jsonify({"hashtags": predicted_hashtags})
+features = np.array(features)
+mlb = MultiLabelBinarizer()
+y = mlb.fit_transform(labels)
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+# Save the features and labels for future use
+np.save('features.npy', features)
+np.save('labels.npy', y)
+joblib.dump(mlb, 'mlb.pkl')
