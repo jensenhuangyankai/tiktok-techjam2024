@@ -30,7 +30,7 @@ const Home = () => {
           description="AI-Powered Hashtag Suggestions. Leverage the power of advanced AI algorithms to analyze your video content and generate the most relevant and trending hashtags. Boost your visibility and engagement on TikTok effortlessly."
         />
         <FeatureSection
-          title="Personal Touch"
+          title="Personal  Touch"
           description="Customizable Hashtag Lists. Review and personalize your AI-generated hashtags to match your unique style and content goals. Fine-tune your hashtag strategy to maximize your reach and impact on TikTok."
         />
       </MainContent>
