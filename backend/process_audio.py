@@ -9,7 +9,7 @@ model = whisper.load_model("base")
 classifier = pipeline(task="zero-shot-audio-classification", model="laion/clap-htsat-unfused")
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
-API_KEY = "c116b9cbea4c8ed588bf15747d9c466b"  # Replace with your actual AudD API key
+API_KEY = "c116b9cbea4c8ed588bf15747d9c466b"  # need update aft 20 july, free trial lasts 14 days :(
 
 def convert_mp3_to_wav(mp3_file_path):
     wav_file_path = os.path.splitext(mp3_file_path)[0] + ".wav"
@@ -64,7 +64,8 @@ def process_audio(audio_file):
         audio_file = convert_mp3_to_wav(audio_file)
 
     classification = classify_audio(audio_file)
-    hashtags = ""
+
+    hashtags = []
 
     if classification == "speech":
         text = transcribe_audio(audio_file)
@@ -74,6 +75,7 @@ def process_audio(audio_file):
         if text:
             keywords = extract_keywords(text)
             print(f"keywords: {keywords}")
+            hashtags.append(keywords)
         else:
             print("no keywords")
     else:
@@ -83,18 +85,20 @@ def process_audio(audio_file):
             try:
                 trimmed_audio = trim_audio(audio_file)
                 title = identify_song(trimmed_audio, API_KEY)
+                title = "".join(char for char in title if char.isalnum())
+                os.remove(trimmed_audio)
             except Exception as e:
                 title = f"failed to retrieve due to {str(e)}"
         print(f"Title: {title}")
 
+        hashtags.append(title)
+
     if audio_file.endswith('.wav'):
         os.remove(audio_file)
 
-    if trimmed_audio:
-        os.remove(trimmed_audio)
-
+    print(hashtags)
     return hashtags
 
-if __name__ == "__main__":
-    audio_file_path = "backend/example.mp3"  # Update this to your actual audio file path
+if __name__ == "__main__": #to remove, this is just fro testing
+    audio_file_path = "backend/ted_test.mp3"  
     process_audio(audio_file_path)
