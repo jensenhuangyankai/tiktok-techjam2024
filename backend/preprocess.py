@@ -41,34 +41,16 @@ def extract_audio_features(video_path):
     return np.mean(mfccs.T, axis=0)
 
 data_dir = "data"
+features = []
+labels = []
 
 
 
-def get_hashtags(frames):
-    features = []
-    labels = []
-    for hashtag in ["london", "paris", "newyork"]:
-        frame_features = extract_clip_features(frames)
-        averaged_frame_features = np.mean(frame_features, axis=0)
+features = np.array(features)
+mlb = MultiLabelBinarizer()
+y = mlb.fit_transform(labels)
 
-        #audio_features = extract_audio_features(video_path)
-
-        #combined_features = np.concatenate((averaged_frame_features, audio_features))
-
-        features.append(averaged_frame_features)
-        labels.append(hashtag)
-
-    features = np.array(features)
-    mlb = MultiLabelBinarizer()
-    y = mlb.fit_transform(labels)
-
-    print(y)
-    print(mlb)
-    print(features)
-    # Save the features and labels for future use
-    np.save('features.npy', features)
-    np.save('labels.npy', y)
-    joblib.dump(mlb, 'mlb.pkl')
-
-
-
+# Save the features and labels for future use
+np.save('features.npy', features)
+np.save('labels.npy', y)
+joblib.dump(mlb, 'mlb.pkl')

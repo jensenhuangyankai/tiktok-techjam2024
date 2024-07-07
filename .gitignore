@@ -295,4 +295,5 @@ cython_debug/
 
 .jpg
 .mp4
-.mp3
+backend/ted_test.mp3
+backend/example.mp3
