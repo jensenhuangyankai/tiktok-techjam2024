@@ -17,6 +17,7 @@
 }
 
 body {
+  @apply text-base text-black bg-gradient-to-b from-gray-200 to-white;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
