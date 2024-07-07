@@ -75,7 +75,9 @@ def process_audio(audio_file):
         if text:
             keywords = extract_keywords(text)
             print(f"keywords: {keywords}")
-            hashtags.append(keywords)
+            keywords = keywords.split(" ")
+            for word in keywords:
+                hashtags.append(word)
         else:
             print("no keywords")
     else:
