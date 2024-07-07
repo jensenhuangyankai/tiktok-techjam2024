@@ -123,13 +123,19 @@ const UploadButton = () => {
         .then(data => {
             console.log(data);
             alert('Video uploaded successfully');
+
+            // Navigate to the ResultsPage with the videoTags and audioTags
+            const query = new URLSearchParams({
+                videoTags: JSON.stringify(data.videoTags),
+                audioTags: JSON.stringify(data.audioTags),
+            }).toString();
+            router.push(`/results?${query}`);
         })
         .catch(error => {
             console.error('Error uploading video:', error);
             alert('Error uploading video: ' + error.message);
         });
     };
-
     const handleDeleteClick = () => {
         setSelectedFile(null);
         setVideoUrl(null);

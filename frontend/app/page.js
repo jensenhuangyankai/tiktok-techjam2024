@@ -6,7 +6,6 @@ import Footer from '../components/Footer';
 import styled from 'styled-components';
 import FeatureSection from '../components/FeatureSection';
 import UploadButton from '@/components/UploadButton';
-import ResultsPage from '@/components/ResultsPage';
 
 const Home = () => {
   return (
@@ -26,7 +25,9 @@ const Home = () => {
           description="In our pursuit of excellence, we guarantee quality in every aspect of our service. Explore the unique advantages that make us stand out from the rest."
         />
         <FeatureSection
-          title="Seamless Uploads"
+          title="Seamless Uploads
+
+"
           description="Effortless Video Uploads. Upload your TikTok videos seamlessly with our user-friendly drag-and-drop interface. Our platform supports various video formats, ensuring a hassle-free experience."
         />
         <FeatureSection
