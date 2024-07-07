@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import styled from 'styled-components';
 import FeatureSection from '../components/FeatureSection';
 import UploadButton from '@/components/UploadButton';
+import ResultsPage from '@/components/ResultsPage';
 
 const Home = () => {
   return (
@@ -19,6 +20,7 @@ const Home = () => {
           </HeroText>
         </HeroSection>
         <UploadButton/>
+        
         <FeatureSection
           title="Quality Assurance"
           description="In our pursuit of excellence, we guarantee quality in every aspect of our service. Explore the unique advantages that make us stand out from the rest."

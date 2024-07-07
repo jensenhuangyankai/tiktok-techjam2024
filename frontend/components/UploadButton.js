@@ -2,6 +2,7 @@
 
 import styled from 'styled-components';
 import { useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const UploadContainer = styled.div`
     display: flex;
@@ -83,6 +84,7 @@ const UploadButton = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [videoUrl, setVideoUrl] = useState(null);
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const handleAddClick = () => {
         fileInputRef.current.click();
@@ -95,6 +97,7 @@ const UploadButton = () => {
     };
 
     const handleUploadClick = () => {
+        
         if (!selectedFile) {
             alert('Please select a video first');
             return;
