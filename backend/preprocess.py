@@ -41,32 +41,34 @@ def extract_audio_features(video_path):
     return np.mean(mfccs.T, axis=0)
 
 data_dir = "data"
-features = []
-labels = []
 
-for hashtag in ["london", "paris", "newyork"]:
-    posts_file = os.path.join(data_dir, hashtag, "posts.json")
-    with open(posts_file, "r") as f:
-        posts = json.load(f)
 
-    for post in posts:
-        video_path = os.path.join(data_dir, hashtag, "media", post["video_id"] + ".mp4")
-        frames = extract_frames(video_path)
+
+def get_hashtags(frames):
+    features = []
+    labels = []
+    for hashtag in ["london", "paris", "newyork"]:
         frame_features = extract_clip_features(frames)
         averaged_frame_features = np.mean(frame_features, axis=0)
 
-        audio_features = extract_audio_features(video_path)
+        #audio_features = extract_audio_features(video_path)
 
-        combined_features = np.concatenate((averaged_frame_features, audio_features))
+        #combined_features = np.concatenate((averaged_frame_features, audio_features))
 
-        features.append(combined_features)
-        labels.append(post["hashtags"])
+        features.append(averaged_frame_features)
+        labels.append(hashtag)
 
-features = np.array(features)
-mlb = MultiLabelBinarizer()
-y = mlb.fit_transform(labels)
+    features = np.array(features)
+    mlb = MultiLabelBinarizer()
+    y = mlb.fit_transform(labels)
 
-# Save the features and labels for future use
-np.save('features.npy', features)
-np.save('labels.npy', y)
-joblib.dump(mlb, 'mlb.pkl')
+    print(y)
+    print(mlb)
+    print(features)
+    # Save the features and labels for future use
+    np.save('features.npy', features)
+    np.save('labels.npy', y)
+    joblib.dump(mlb, 'mlb.pkl')
+
+
+
