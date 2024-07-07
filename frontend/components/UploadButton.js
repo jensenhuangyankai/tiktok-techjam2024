@@ -55,6 +55,10 @@ const UploadButtonStyled = styled.button`
     &:hover {
         background-color: #d03b3b;
     }
+    &:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
 `;
 
 const DeleteButton = styled.button`
@@ -78,6 +82,7 @@ const UploadButton = () => {
     const fileInputRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [videoUrl, setVideoUrl] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const handleAddClick = () => {
         fileInputRef.current.click();
@@ -95,16 +100,20 @@ const UploadButton = () => {
             return;
         }
 
+        setLoading(true);
         const formData = new FormData();
         formData.append('video', selectedFile);
 
-        fetch('http://localhost:5000/upload', {
+        fetch('http://127.0.0.1:5000/upload', {
             method: 'POST',
             body: formData,
         })
         .then(response => {
+            setLoading(false);
             if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
+                return response.json().then(errorData => {
+                    throw new Error(`Network response was not ok: ${errorData.message}`);
+                });
             }
             return response.json();
         })
@@ -114,7 +123,7 @@ const UploadButton = () => {
         })
         .catch(error => {
             console.error('Error uploading video:', error);
-            alert('Error uploading video');
+            alert('Error uploading video: ' + error.message);
         });
     };
 
@@ -146,8 +155,8 @@ const UploadButton = () => {
                     onChange={handleFileChange}
                 />
             </UploadImage>
-            <UploadButtonStyled onClick={handleUploadClick}>
-                Upload Video
+            <UploadButtonStyled onClick={handleUploadClick} disabled={loading}>
+                {loading ? 'Uploading...' : 'Upload Video'}
             </UploadButtonStyled>
         </UploadContainer>
     );
