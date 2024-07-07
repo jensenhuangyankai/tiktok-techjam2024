@@ -1,1 +1,13 @@
 Flask==3.0.3
+flask
+flask-cors
+opencv-python-headless
+git+https://github.com/openai/CLIP.git
+pillow
+torch
+torchvision
+transformers
+tiktok-hashtag-analysis
+scikit-learn
+joblib
+librosa
