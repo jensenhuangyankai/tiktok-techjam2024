@@ -34,15 +34,12 @@ def extract_frames(video_path, frame_rate=1):
     video_capture.release()
     return frames
 
-def extract_clip_features(frames):
-    frame_features = []
-    for frame in frames:
-        image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        image = preprocess(image).unsqueeze(0).to(device)
-        with torch.no_grad():
-            image_features = model.encode_image(image)
-        frame_features.append(image_features.cpu().numpy())
-    return np.array(frame_features)
+def extract_clip_features(frame):
+    image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+    image = preprocess(image).unsqueeze(0).to(device)
+    with torch.no_grad():
+        image_features = model.encode_image(image)
+    return image_features.cpu().numpy()
 
 def extract_audio_features(video_path):
     y, sr = librosa.load(video_path, sr=16000)
