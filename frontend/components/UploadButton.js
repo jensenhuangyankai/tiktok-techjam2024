@@ -97,45 +97,55 @@ const UploadButton = () => {
     };
 
     const handleUploadClick = () => {
-        
         if (!selectedFile) {
             alert('Please select a video first');
             return;
         }
-
+    
         setLoading(true);
         const formData = new FormData();
         formData.append('video', selectedFile);
-
+    
+        console.log('Starting fetch request to upload video...');
+    
         fetch('http://127.0.0.1:5000/upload', {
             method: 'POST',
             body: formData,
         })
         .then(response => {
-            setLoading(false);
+            console.log('Fetch request completed. Checking response...');
+            setLoading(false); // Ensure loading state is reset
             if (!response.ok) {
-                return response.json().then(errorData => {
-                    throw new Error(`Network response was not ok: ${errorData.message}`);
+                console.error('Response not OK:', response);
+                return response.text().then(errorText => {
+                    console.error('Error response text:', errorText);
+                    throw new Error(`Network response was not ok: ${response.statusText}`);
                 });
             }
             return response.json();
         })
         .then(data => {
-            console.log(data);
-            alert('Video uploaded successfully');
-
-            // Navigate to the ResultsPage with the videoTags and audioTags
-            const query = new URLSearchParams({
-                videoTags: JSON.stringify(data.videoTags),
-                audioTags: JSON.stringify(data.audioTags),
-            }).toString();
-            router.push(`/results?${query}`);
+            console.log('Response JSON:', data);
+            if (data.top_tags) {
+                alert('Video uploaded successfully');
+    
+                // Navigate to the ResultsPage with the videoTags and audioTags
+                const query = new URLSearchParams({
+                    topTags: JSON.stringify(data.top_tags),
+                }).toString();
+                router.push(`/results?${query}`);
+            } else {
+                console.error('Unexpected response structure:', data);
+                alert('Unexpected response structure received from server.');
+            }
         })
         .catch(error => {
-            console.error('Error uploading video:', error);
+            setLoading(false);  // Ensure loading is set to false in case of error
+            console.error('Error in fetch operation:', error);
             alert('Error uploading video: ' + error.message);
         });
     };
+    
     const handleDeleteClick = () => {
         setSelectedFile(null);
         setVideoUrl(null);
