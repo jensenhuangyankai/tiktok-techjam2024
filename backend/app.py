@@ -14,7 +14,10 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 def hello_world():
     return "<p>Hello, World!</p>"
 
-videos = UploadSet("videos", ["mp4", "mov", "avi", "wmv", "avchd", "webm", "flv"], default_dest=app.config['UPLOAD_FOLDER'])
+def setDest(app):
+    return app.config['UPLOAD_FOLDER']
+
+videos = UploadSet("videos", ["mp4", "mov", "avi", "wmv", "avchd", "webm", "flv"], default_dest=setDest)
 configure_uploads(app, videos)
 
 @app.route("/upload", methods=['POST'])
@@ -25,7 +28,8 @@ def upload():
         video_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
         frame_files = extract_frames(video_path, app.config['FRAME_FOLDER'])
-        for frame in frame_files:
+        print(frame_files)
+
             
 
         
