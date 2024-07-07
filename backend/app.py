@@ -74,6 +74,7 @@ def generate_hashtags():
         hashtags = logistic_model.predict(combined_features)
         predicted_hashtags = mlb.inverse_transform(hashtags)[0]
 
+        print(predicted_hashtags)
         return jsonify({"hashtags": predicted_hashtags})
 
 if __name__ == "__main__":
