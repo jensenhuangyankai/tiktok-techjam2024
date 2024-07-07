@@ -3,8 +3,16 @@ from flask import Flask, Response, request, send_from_directory
 from flask_uploads import UploadSet, configure_uploads
 import cv2
 from werkzeug.utils import secure_filename
+from flask import Flask, Response, request, send_from_directory
+from flask_uploads import UploadSet, configure_uploads
+import cv2
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['FRAME_FOLDER'] = 'frames'
+os.makedirs(app.config['FRAME_FOLDER'], exist_ok=True)
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['FRAME_FOLDER'] = 'frames'
 os.makedirs(app.config['FRAME_FOLDER'], exist_ok=True)
