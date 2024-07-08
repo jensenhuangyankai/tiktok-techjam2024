@@ -62,6 +62,9 @@ def trim_audio(audio_file_path, duration_ms=12000):
         return None
 
 def process_audio(audio_file):
+    if not audio_file:
+        return []
+
     if audio_file.endswith('.mp3'):
         audio_file = convert_mp3_to_wav(audio_file)
 
