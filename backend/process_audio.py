@@ -62,6 +62,9 @@ def trim_audio(audio_file_path, duration_ms=12000):
         return None
 
 def process_audio(audio_file):
+    if not audio_file:
+        return []
+
     if audio_file.endswith('.mp3'):
         audio_file = convert_mp3_to_wav(audio_file)
 
@@ -91,11 +94,10 @@ def process_audio(audio_file):
                 title = identify_song(trimmed_audio, API_KEY)
                 title = "".join(char for char in title if char.isalnum())
                 os.remove(trimmed_audio)
+                hashtags.append(title)
             except Exception as e:
                 title = f"failed to retrieve due to {str(e)}"
         print(f"Title: {title}")
-
-        hashtags.append(title)
 
     if audio_file.endswith('.wav'):
         os.remove(audio_file)
