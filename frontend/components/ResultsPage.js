@@ -1,27 +1,34 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 import styled from 'styled-components';
 
 const ResultsPage = () => {
-  const router = useRouter();
-  const { videoTags, audioTags } = router.query;
+  const searchParams = useSearchParams();
+  const videoTags = searchParams.get('videoTags');
+  const audioTags = searchParams.get('audioTags');
   const [parsedVideoTags, setParsedVideoTags] = useState([]);
   const [parsedAudioTags, setParsedAudioTags] = useState([]);
   const [relatedTags, setRelatedTags] = useState(null);
 
   useEffect(() => {
-    if (videoTags) {
-      setParsedVideoTags(JSON.parse(videoTags));
-    }
-    if (audioTags) {
-      setParsedAudioTags(JSON.parse(audioTags));
+    try {
+      if (videoTags) {
+        setParsedVideoTags(JSON.parse(videoTags));
+      }
+      if (audioTags) {
+        setParsedAudioTags(JSON.parse(audioTags));
+      }
+    } catch (error) {
+      console.error('Error parsing tags:', error);
     }
   }, [videoTags, audioTags]);
 
   const renderTags = (tags) => {
-    return tags.map((tag) => (
-      <Tag key={tag}>
-        {tag}
+    return tags.map((tag, index) => (
+      <Tag key={index}>
+        #{tag}
       </Tag>
     ));
   };
@@ -49,13 +56,13 @@ const ResultsPage = () => {
         <TagSection>
           <SectionHeader>Video Tags</SectionHeader>
           <TagList>
-            {renderTags(parsedVideoTags)}
+            {parsedVideoTags.length > 0 ? renderTags(parsedVideoTags) : <NoTagsMessage>No video tags available</NoTagsMessage>}
           </TagList>
         </TagSection>
         <TagSection>
           <SectionHeader>Audio Tags</SectionHeader>
           <TagList>
-            {renderTags(parsedAudioTags)}
+            {parsedAudioTags.length > 0 ? renderTags(parsedAudioTags) : <NoTagsMessage>No audio tags available</NoTagsMessage>}
           </TagList>
         </TagSection>
       </TagsContainer>
@@ -139,6 +146,11 @@ const GenerateButton = styled.button`
 
 const RelatedTagsContainer = styled.div`
   margin-top: 40px;
+`;
+
+const NoTagsMessage = styled.p`
+  color: grey;
+  font-style: italic;
 `;
 
 export default ResultsPage;

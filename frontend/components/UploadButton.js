@@ -108,7 +108,7 @@ const UploadButton = () => {
     
         console.log('Starting fetch request to upload video...');
     
-        fetch('http://127.0.0.1:5000/upload', {
+        fetch('https://techjam2024.zrok.jensenhshoots.com/upload', {
             method: 'POST',
             body: formData,
         })
@@ -125,23 +125,22 @@ const UploadButton = () => {
             return response.json();
         })
         .then(data => {
-            console.log('Response JSON:', data);
-            if (data.top_tags) {
-                alert('Video uploaded successfully');
-    
-                // Navigate to the ResultsPage with the videoTags and audioTags
-                const query = new URLSearchParams({
-                    topTags: JSON.stringify(data.top_tags),
-                }).toString();
-                router.push(`/results?${query}`);
-            } else {
-                console.error('Unexpected response structure:', data);
-                alert('Unexpected response structure received from server.');
-            }
+            console.log(data);
+            const videoTags = data.video_tags || [];
+            const audioTags = data.audio_tags || [];
+            const query = new URLSearchParams({
+                videoTags: JSON.stringify(videoTags),
+                audioTags: JSON.stringify(audioTags),
+            }).toString();
+            console.log(query);
+            alert('Video uploaded successfully');
+            
+            // Navigate to the ResultsPage with the videoTags and audioTags
+            
+            router.push(`/results?${query}`);
         })
         .catch(error => {
-            setLoading(false);  // Ensure loading is set to false in case of error
-            console.error('Error in fetch operation:', error);
+            console.error('Error uploading video:', error);
             alert('Error uploading video: ' + error.message);
         });
     };
