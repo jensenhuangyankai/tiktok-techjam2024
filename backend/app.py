@@ -9,7 +9,7 @@ from audio_extract import extract_audio
 
 from ImageProcess import *
 from process_audio import *
-
+from generateTags import *
 
 app = Flask(__name__)
 
@@ -100,6 +100,18 @@ def upload():
 @app.route('/frames/<filename>')
 def get_frame(filename):
     return send_from_directory(app.config['FRAME_FOLDER'], filename)
+
+@app.route('/generateTags', methods=['POST'])
+def generateTags():
+    tagList = request.args.get('tagList')
+
+    newTags = generateTagsfromList(tagList)
+    respDict = {'newTags' : newTags}
+    response = jsonify(respDict)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+
 
 def extract_frames(video_path, output_folder):
     os.makedirs(output_folder, exist_ok=True)
