@@ -5,6 +5,9 @@ flask
 flask-cors
 opencv-python-headless
 git+https://github.com/openai/CLIP.git
+git+https://github.com/bellingcat/tiktok-hashtag-analysis
+pydub
+requests
 pillow
 torch
 torchvision

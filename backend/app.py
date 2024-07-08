@@ -1,5 +1,9 @@
 import os
+<<<<<<< HEAD
 from flask import Flask, Response, request, send_from_directory, jsonify
+=======
+from flask import Flask, Response, request, send_from_directory
+>>>>>>> b29c9a2b333658464e8bcaffcba5816575c6cb5a
 from flask_uploads import UploadSet, configure_uploads
 import cv2
 from werkzeug.utils import secure_filename
@@ -46,6 +50,33 @@ def upload():
 
         frame_folder = os.path.join(app.config['FRAME_FOLDER'], filename)
         frame_files = extract_frames(video_path, frame_folder)
+<<<<<<< HEAD
+=======
+        
+        frame_num = 0
+        imageTags = {word: 0 for word in nounList}
+        cumulative_sums = {key: 0 for key in imageTags}
+        counts = {key: 0 for key in imageTags}
+
+        for i in range(0, len(frame_files), 10):
+            print(frame_num)
+            
+            frame_file = frame_files[i]
+            image = Image.open(frame_file)
+            newImageTags = getImageTags(image, nounList)
+
+            for key in newImageTags:
+                cumulative_sums[key] += newImageTags[key]
+                counts[key] += 1
+            avg_dict = {key: cumulative_sums[key] / counts[key] for key in cumulative_sums}
+            for key in imageTags:
+                imageTags[key] = avg_dict[key]
+            frame_num += 10
+
+        top_n = sorted(imageTags.items(), key=lambda item: item[1], reverse=True)[:3]
+        print(top_n)
+
+>>>>>>> b29c9a2b333658464e8bcaffcba5816575c6cb5a
         
         frame_num = 0
         imageTags = {word: 0 for word in nounList}
