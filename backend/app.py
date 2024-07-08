@@ -94,6 +94,7 @@ def upload():
             print(audio_tags)
         else:
             audio_tags = []
+            
         response = {'video_tags': video_tags, 'audio_tags': audio_tags}
         response = jsonify(response)
         response.headers.add('Access-Control-Allow-Origin', '*')
