@@ -89,8 +89,11 @@ def upload():
         for key in top_n.keys():
             video_tags.append(key)
         
-        audio_tags = process_audio(audio_path)
-        print(audio_tags)
+        if audio_path:
+            audio_tags = process_audio(audio_path)
+            print(audio_tags)
+        else:
+            audio_tags = []
         response = {'video_tags': video_tags, 'audio_tags': audio_tags}
         response = jsonify(response)
         response.headers.add('Access-Control-Allow-Origin', '*')
