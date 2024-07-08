@@ -7,6 +7,7 @@ import shutil
 from PIL import Image
 from audio_extract import extract_audio
 
+from process_audio import *
 from ImageProcess import *
 from process_audio import *
 
