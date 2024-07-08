@@ -40,6 +40,14 @@ with open("common-nouns.txt", 'r') as file:
         word = line.strip()
         nounList.append(word)
 
+
+nounList = []
+with open("common-nouns.txt", 'r') as file:
+    lines = file.readlines()
+    for line in lines:
+        word = line.strip()
+        nounList.append(word)
+
 @app.route("/upload", methods=['POST'])
 def upload():
     if request.method == 'POST' and 'video' in request.files:
@@ -95,6 +103,7 @@ def get_frame(filename):
 
 def extract_frames(video_path, output_folder):
     os.makedirs(output_folder, exist_ok=True)
+    os.makedirs(output_folder, exist_ok=True)
     cap = cv2.VideoCapture(video_path)
     frame_count = 0
     frame_files = []
@@ -103,6 +112,7 @@ def extract_frames(video_path, output_folder):
         ret, frame = cap.read()
         if not ret:
             break
+        
         
         frame_filename = os.path.join(output_folder, f"frame_{frame_count:04d}.jpg")
         cv2.imwrite(frame_filename, frame)
