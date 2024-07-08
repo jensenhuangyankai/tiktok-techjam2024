@@ -3,11 +3,13 @@ from transformers import pipeline
 from pydub import AudioSegment
 import os
 import requests
-
+import torch
 # Load models
 model = whisper.load_model("base")
-classifier = pipeline(task="zero-shot-audio-classification", model="laion/clap-htsat-unfused")
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+device = "cuda" if torch.cuda.is_available() else "cpu"
+classifier = pipeline(task="zero-shot-audio-classification", model="laion/clap-htsat-unfused", device=device)
+summarizer = pipeline("summarization", model="facebook/bart-large-cnn",device=device)
+
 
 API_KEY = "c116b9cbea4c8ed588bf15747d9c466b"  # need update aft 20 july, free trial lasts 14 days :(
 

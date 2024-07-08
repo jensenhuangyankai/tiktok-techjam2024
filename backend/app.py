@@ -1,19 +1,18 @@
 import os
-<<<<<<< HEAD
 from flask import Flask, Response, request, send_from_directory, jsonify
-=======
-from flask import Flask, Response, request, send_from_directory
->>>>>>> b29c9a2b333658464e8bcaffcba5816575c6cb5a
 from flask_uploads import UploadSet, configure_uploads
 import cv2
 from werkzeug.utils import secure_filename
 import shutil
 from PIL import Image
+from audio_extract import extract_audio
 
 from ImageProcess import *
+from process_audio import *
 
 
 app = Flask(__name__)
+
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['FRAME_FOLDER'] = 'frames'
 os.makedirs(app.config['FRAME_FOLDER'], exist_ok=True)
@@ -47,36 +46,12 @@ def upload():
         filename = videos.save(request.files['video'])
         print("video saved.")
         video_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        pre, ext = os.path.splitext(video_path)
+        audio_path = pre + ".mp3"
+        extract_audio(input_path=video_path, output_path=audio_path)
 
         frame_folder = os.path.join(app.config['FRAME_FOLDER'], filename)
         frame_files = extract_frames(video_path, frame_folder)
-<<<<<<< HEAD
-=======
-        
-        frame_num = 0
-        imageTags = {word: 0 for word in nounList}
-        cumulative_sums = {key: 0 for key in imageTags}
-        counts = {key: 0 for key in imageTags}
-
-        for i in range(0, len(frame_files), 10):
-            print(frame_num)
-            
-            frame_file = frame_files[i]
-            image = Image.open(frame_file)
-            newImageTags = getImageTags(image, nounList)
-
-            for key in newImageTags:
-                cumulative_sums[key] += newImageTags[key]
-                counts[key] += 1
-            avg_dict = {key: cumulative_sums[key] / counts[key] for key in cumulative_sums}
-            for key in imageTags:
-                imageTags[key] = avg_dict[key]
-            frame_num += 10
-
-        top_n = sorted(imageTags.items(), key=lambda item: item[1], reverse=True)[:3]
-        print(top_n)
-
->>>>>>> b29c9a2b333658464e8bcaffcba5816575c6cb5a
         
         frame_num = 0
         imageTags = {word: 0 for word in nounList}
@@ -100,9 +75,17 @@ def upload():
 
         top_n = sorted(imageTags.items(), key=lambda item: item[1], reverse=True)[:3]
         top_n = dict(top_n)
-        top_n = jsonify(top_n)
+        print(top_n)
+        video_tags = []
+        for key in top_n.keys():
+            video_tags.append(key)
         
-        return top_n
+        audio_tags = process_audio(audio_path)
+        print(audio_tags)
+        response = {'video_tags': video_tags, 'audio_tags': audio_tags}
+        response = jsonify(response)
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
     else:
         return Response({"no": "no"}, status=201, mimetype='application/json')
 
